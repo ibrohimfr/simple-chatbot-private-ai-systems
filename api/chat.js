@@ -15,7 +15,8 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+// Serve the root directory locally so index.html works
+app.use(express.static(path.join(__dirname, "../")));
 
 // Basic Error Handling for Missing API Key
 if (!process.env.GEMINI_API_KEY) {
@@ -28,7 +29,7 @@ const genAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   : null;
 
-app.post("/api/chat", async (req, res) => {
+app.post(["/api/chat", "*"], async (req, res) => {
   try {
     const { message } = req.body;
 
@@ -63,6 +64,12 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+// For local testing (Vercel automatically marks NODE_ENV as 'production')
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+  });
+}
+
+// Export the Express app so Vercel can run it as a serverless function!
+export default app;
