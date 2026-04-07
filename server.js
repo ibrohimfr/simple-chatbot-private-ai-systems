@@ -1,9 +1,9 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 dotenv.config();
 
@@ -15,16 +15,20 @@ const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Basic Error Handling for Missing API Key
 if (!process.env.GEMINI_API_KEY) {
-  console.warn("WARNING: GEMINI_API_KEY environment variable is not set. The chatbot will not be able to generate responses.");
+  console.warn(
+    "WARNING: GEMINI_API_KEY environment variable is not set. The chatbot will not be able to generate responses.",
+  );
 }
 
-const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
+const genAI = process.env.GEMINI_API_KEY
+  ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
+  : null;
 
-app.post('/api/chat', async (req, res) => {
+app.post("/api/chat", async (req, res) => {
   try {
     const { message } = req.body;
 
@@ -33,7 +37,12 @@ app.post('/api/chat', async (req, res) => {
     }
 
     if (!genAI) {
-      return res.status(500).json({ error: "API key is missing on the server. Please set GEMINI_API_KEY in the .env file." });
+      return res
+        .status(500)
+        .json({
+          error:
+            "API key is missing on the server. Please set GEMINI_API_KEY in the .env file.",
+        });
     }
 
     // Using Gemini as an example basic LLM
@@ -45,7 +54,12 @@ app.post('/api/chat', async (req, res) => {
     res.json({ reply: text });
   } catch (error) {
     console.error("Error generating response:", error);
-    res.status(500).json({ error: "An error occurred while communicating with the AI. Check the server console for details." });
+    res
+      .status(500)
+      .json({
+        error:
+          "An error occurred while communicating with the AI. Check the server console for details.",
+      });
   }
 });
 
