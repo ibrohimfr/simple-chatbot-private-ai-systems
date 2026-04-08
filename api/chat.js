@@ -46,8 +46,8 @@ app.post(["/api/chat", "*"], async (req, res) => {
         });
     }
 
-    // Using Gemini as an example basic LLM
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // Using Gemini 1.5 Flash (the current stable model)
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
     const result = await model.generateContent(message);
     const response = await result.response;
     const text = response.text();
